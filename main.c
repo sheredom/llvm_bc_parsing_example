@@ -76,6 +76,115 @@ int main(const int argc, const char *const argv[]) {
   // done with the memory buffer now, so dispose of it
   LLVMDisposeMemoryBuffer(memoryBuffer);
 
+  // loop through all the functions in the module
+  for (LLVMValueRef function = LLVMGetFirstFunction(module); function;
+       function = LLVMGetNextFunction(function)) {
+    // loop through all the basic blocks in the function
+    for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function);
+         basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
+      // we'll keep track of the last instruction that we seen (for reasons that
+      // will become clearer later)
+      LLVMValueRef lastInstruction = 0;
+
+      // loop through all the instructions in the basic block
+      for (LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock);
+           instruction;) {
+        LLVMValueRef replacementValue = 0;
+
+        // look for math instructions
+        if (LLVMIsABinaryOperator(instruction)) {
+          // we have a binary operator, which always has two operands
+          LLVMValueRef x = LLVMGetOperand(instruction, 0);
+          LLVMValueRef y = LLVMGetOperand(instruction, 1);
+
+          // check if each argument is a constant
+          const int allConstant = LLVMIsAConstant(x) && LLVMIsAConstant(y);
+
+          if (allConstant) {
+            switch (LLVMGetInstructionOpcode(instruction)) {
+            default:
+              break;
+            case LLVMAdd:
+              replacementValue = LLVMConstAdd(x, y);
+              break;
+            case LLVMFAdd:
+              replacementValue = LLVMConstFAdd(x, y);
+              break;
+            case LLVMSub:
+              replacementValue = LLVMConstSub(x, y);
+              break;
+            case LLVMFSub:
+              replacementValue = LLVMConstFSub(x, y);
+              break;
+            case LLVMMul:
+              replacementValue = LLVMConstMul(x, y);
+              break;
+            case LLVMFMul:
+              replacementValue = LLVMConstFMul(x, y);
+              break;
+            case LLVMUDiv:
+              replacementValue = LLVMConstUDiv(x, y);
+              break;
+            case LLVMSDiv:
+              replacementValue = LLVMConstSDiv(x, y);
+              break;
+            case LLVMFDiv:
+              replacementValue = LLVMConstFDiv(x, y);
+              break;
+            case LLVMURem:
+              replacementValue = LLVMConstURem(x, y);
+              break;
+            case LLVMSRem:
+              replacementValue = LLVMConstSRem(x, y);
+              break;
+            case LLVMFRem:
+              replacementValue = LLVMConstFRem(x, y);
+              break;
+            case LLVMShl:
+              replacementValue = LLVMConstShl(x, y);
+              break;
+            case LLVMLShr:
+              replacementValue = LLVMConstLShr(x, y);
+              break;
+            case LLVMAShr:
+              replacementValue = LLVMConstAShr(x, y);
+              break;
+            case LLVMAnd:
+              replacementValue = LLVMConstAnd(x, y);
+              break;
+            case LLVMOr:
+              replacementValue = LLVMConstOr(x, y);
+              break;
+            case LLVMXor:
+              replacementValue = LLVMConstXor(x, y);
+              break;
+            }
+          }
+        }
+
+        // if we managed to find a more optimal replacement
+        if (replacementValue) {
+          // replace all uses of the old instruction with the new one
+          LLVMReplaceAllUsesWith(instruction, replacementValue);
+
+          // erase the instruction that we've replaced
+          LLVMInstructionEraseFromParent(instruction);
+
+          // if we don't have a previous instruction, get the first one from the
+          // basic block again
+          if (!lastInstruction) {
+            instruction = LLVMGetFirstInstruction(basicBlock);
+          } else {
+            instruction = LLVMGetNextInstruction(lastInstruction);
+          }
+        } else {
+          lastInstruction = instruction;
+          instruction = LLVMGetNextInstruction(instruction);
+        }
+      }
+    }
+  }
+
   // check if we are to write our output file to stdout
   if (('-' == outputFilename[0]) && ('\0' == outputFilename[1])) {
     if (0 != LLVMWriteBitcodeToFD(module, STDOUT_FILENO, 0, 0)) {
