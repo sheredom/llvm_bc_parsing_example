@@ -26,29 +26,30 @@
 project(llvm_bc_parsing_example)
 cmake_minimum_required(VERSION 3.4.3)
 
-# pption to allow a user to specify where an LLVM install is on the system
-set(LLVM_INSTALL_DIR "" CACHE STRING "An LLVM install directory.")
 
-if("${LLVM_INSTALL_DIR}" STREQUAL "")
-  message(FATAL_ERROR "LLVM_INSTALL_DIR not set! Set it to the location of an LLVM install.")
-endif()
+find_package(LLVM REQUIRED CONFIG)
 
-# fixup paths to only use the Linux convention
-string(REPLACE "\\" "/" LLVM_INSTALL_DIR ${LLVM_INSTALL_DIR})
+message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
+message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
 
-# tell CMake where LLVM's module is
-list(APPEND CMAKE_MODULE_PATH ${LLVM_INSTALL_DIR}/lib/cmake/llvm)
 
-# include LLVM
-include(LLVMConfig)
+include_directories(${LLVM_INCLUDE_DIRS})
+
+add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(llvm_bc_parsing_example main.c)
 
-target_include_directories(llvm_bc_parsing_example PUBLIC ${LLVM_INCLUDE_DIRS})
+llvm_map_components_to_libnames(llvm_libs support core irreader bitreader bitwriter)
 
-target_link_libraries(llvm_bc_parsing_example PUBLIC LLVMBitReader LLVMBitWriter)
+target_link_libraries(llvm_bc_parsing_example ${llvm_libs})
 
-target_compile_options(llvm_bc_parsing_example PUBLIC
-  $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror -std=gnu89>
-  $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Weverything -Werror -std=gnu89>
-  $<$<C_COMPILER_ID:MSVC>:/Wall /WX /wd4514 /wd4710 /wd4820>)
+
+
+#target_include_directories(llvm_bc_parsing_example PUBLIC ${LLVM_INCLUDE_DIRS})
+
+#target_link_libraries(llvm_bc_parsing_example PUBLIC LLVMBitReader LLVMBitWriter)
+
+#target_compile_options(llvm_bc_parsing_example PUBLIC
+#  $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror -std=gnu89>
+#  $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Weverything -Werror -std=gnu89>
+#  $<$<C_COMPILER_ID:MSVC>:/Wall /WX /wd4514 /wd4710 /wd4820>)
