@@ -42,14 +42,3 @@ add_executable(llvm_bc_parsing_example main.c)
 llvm_map_components_to_libnames(llvm_libs support core irreader bitreader bitwriter)
 
 target_link_libraries(llvm_bc_parsing_example ${llvm_libs})
-
-
-
-#target_include_directories(llvm_bc_parsing_example PUBLIC ${LLVM_INCLUDE_DIRS})
-
-#target_link_libraries(llvm_bc_parsing_example PUBLIC LLVMBitReader LLVMBitWriter)
-
-#target_compile_options(llvm_bc_parsing_example PUBLIC
-#  $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror -std=gnu89>
-#  $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Weverything -Werror -std=gnu89>
-#  $<$<C_COMPILER_ID:MSVC>:/Wall /WX /wd4514 /wd4710 /wd4820>)
