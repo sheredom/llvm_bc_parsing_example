@@ -1,4 +1,4 @@
-# LLVM Bitcode Parsing Example #
+# LLVM C-API Bitcode Parsing Example #
 
 A really simple LLVM bitcode parsing example. The example is written in C, uses
 the LLVM C API, and simply reads and writes an LLVM bitcode file either via
