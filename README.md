@@ -6,6 +6,17 @@ files or stdin/stdout.
 
 This example is intended to show how easy it is to interact with LLVM!
 
+## Building
+
+The usual routine:
+```
+mkdir build
+cd build
+cmake ..
+make 
+```
+
+
 ## License ##
 
 This is free and unencumbered software released into the public domain.
