@@ -28,17 +28,21 @@
 #include <llvm-c/Core.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #if defined(_MSC_VER)
 #include <io.h>
 #ifndef STDOUT_FILENO
 #define STDOUT_FILENO 1
 #endif
+#else
+#include <unistd.h>
 #endif
+
 
 int main(const int argc, const char *const argv[]) {
   if (3 != argc) {
-    fprintf(stderr, "Invalid command line!\n");
+    fprintf(stderr, "Usage: %s <input bitcode file> <output bitcode file>!\n", argv[0]);
     return 1;
   }
 
