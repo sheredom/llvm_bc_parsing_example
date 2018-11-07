@@ -6,6 +6,20 @@ files or stdin/stdout.
 
 This example is intended to show how easy it is to interact with LLVM!
 
+## Building ##
+
+To build:
+
+```sh
+    mkdir build
+    cd build/
+    cmake -DLLVM_INSTALL_DIR=/usr/local/opt/llvm ..
+    make
+```
+
+You will need to replace `/usr/local/opt/llvm` with the path to your LLVM
+installation.
+
 ## License ##
 
 This is free and unencumbered software released into the public domain.
