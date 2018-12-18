@@ -28,6 +28,8 @@
 #include <llvm-c/Core.h>
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #if defined(_MSC_VER)
 #include <io.h>

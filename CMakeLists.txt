@@ -50,5 +50,5 @@ target_link_libraries(llvm_bc_parsing_example PUBLIC LLVMBitReader LLVMBitWriter
 
 target_compile_options(llvm_bc_parsing_example PUBLIC
   $<$<C_COMPILER_ID:GNU>:-Wall -Wextra -Werror -std=gnu89>
-  $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Weverything -Werror -std=gnu89>
+  $<$<C_COMPILER_ID:Clang>:-Wall -Wextra -Werror -std=gnu89>
   $<$<C_COMPILER_ID:MSVC>:/Wall /WX /wd4514 /wd4710 /wd4820>)
