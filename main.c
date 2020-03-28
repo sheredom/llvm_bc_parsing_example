@@ -77,18 +77,19 @@ int main(const int argc, const char *const argv[]) {
   LLVMDisposeMemoryBuffer(memoryBuffer);
 
   // loop through all the functions in the module
-  for (LLVMValueRef function = LLVMGetFirstFunction(module); function;
+  LLVMValueRef function = LLVMGetFirstFunction(module);
+  for (; function;
        function = LLVMGetNextFunction(function)) {
     // loop through all the basic blocks in the function
-    for (LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function);
-         basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
+   LLVMBasicBlockRef basicBlock = LLVMGetFirstBasicBlock(function);
+    for (;basicBlock; basicBlock = LLVMGetNextBasicBlock(basicBlock)) {
       // we'll keep track of the last instruction that we seen (for reasons that
       // will become clearer later)
       LLVMValueRef lastInstruction = 0;
 
       // loop through all the instructions in the basic block
-      for (LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock);
-           instruction;) {
+     LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock);
+      for (;instruction;) {
         LLVMValueRef replacementValue = 0;
 
         // look for math instructions
