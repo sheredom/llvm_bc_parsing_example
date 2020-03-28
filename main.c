@@ -88,7 +88,7 @@ int main(const int argc, const char *const argv[]) {
       LLVMValueRef lastInstruction = 0;
 
       // loop through all the instructions in the basic block
-     LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock)
+     LLVMValueRef instruction = LLVMGetFirstInstruction(basicBlock);
       for (;instruction;) {
         LLVMValueRef replacementValue = 0;
 
